@@ -1,23 +1,31 @@
 <h1>Bienvenido listo para invertir</h1>
 <p>Estas son las monedas en las que puedes invertir y sus costos</p>
-
+<div data-controller="websocket-currency" >
 <table class="table table-striped table-hover">
   <thead class="table-primary">
   <tr>
     <th scope="col"> moneda</th>
-    <th scope="col"> Ganancia Mensual </th>
     <th scope="col"> costo </th>
   </tr>
   </thead>
   <tbody>
   <% @monedas.each do |moneda| %>
     <tr>
-      <th><%= moneda.moneda %></th>
-      <th><%= moneda.interes_mensual %> %</th>
-      <th><%= 100 %></th>
+      <td><%= moneda.moneda %></td>
+      <td data-websocket-currency-target="price<%=moneda.moneda %>"></td>
     </tr>
   <% end %>
   </tbody>
 </table>
 
-<div data-controller="websocket-currency" data-websocket-currency-target="container"></div>
+
+<%= form_for :investment, url: investment_index_path do |f| %>
+
+  <%= f.number_field :amount, class: "form-control mb-4" %>
+  <div class="d-grid gap-2 justify-content-md-end">
+    <%= f.submit "Invertir", method:"GET", class: "btn btn-primary content-center", data: {turbo_frame: "investmentGrid"} %>
+  </div>
+<% end %>
+</div>
+
+<%= turbo_frame_tag "investmentGrid" %>

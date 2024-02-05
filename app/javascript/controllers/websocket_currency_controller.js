@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import {createConsumer} from "@rails/actioncable";
 // Connects to data-controller="websocket-currency"
 export default class extends Controller {
-  containerTarget;
+  static targets = ["container", "priceBitcoin", "priceEther", "priceCardano"]
   connect() {
     this.channel = createConsumer().subscriptions.create({channel: "CurrencyChannel"}, {
       received: this.actualizarCurrency.bind(this)
@@ -10,12 +10,23 @@ export default class extends Controller {
   }
 
   actualizarCurrency(data){
-    debugger
+
     const currency = data
-    this.containerTarget.innerHTML = `
-      <p>productId ${currency.product_id} </p>
-      <p>price: ${currency.price} </p>
-    `
+
+    if (currency.product_id === "BTC-USD") {
+      this.priceBitcoinTarget.innerHTML = `
+      <th>${currency.price} </th>`
+    }
+    if (currency.product_id === "ETH-USD") {
+      this.priceEtherTarget.innerHTML = `
+      <th>${currency.price} </th>`
+    }
+    if (currency.product_id === "ADA-USD") {
+      this.priceCardanoTarget.innerHTML = `
+      <th>${currency.price} </th>`
+    }
+
+
   }
 
 }

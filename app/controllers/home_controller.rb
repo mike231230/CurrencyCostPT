@@ -2,12 +2,12 @@ require 'csv'
 require 'websocket-client-simple'
 
 class HomeController < ApplicationController
+  expose :investment
 
 
   def index
     @monedas = []
     @monedas = llenado_monedas
-    puts @monedas.to_json
     websocket_listener
   end
 
@@ -43,10 +43,10 @@ class HomeController < ApplicationController
       mensaje_recibido = JSON.parse(msg.data)
 
       objeto = ObjetoVirtual.new(product_id: mensaje_recibido['product_id'], price: mensaje_recibido['price'] )
-      puts objeto
 
       # Transmitir el objeto a través de Action Cable
       ActionCable.server.broadcast('currency_channel', objeto)
+      sleep 5
     end
 
     client.on(:open) do
@@ -64,11 +64,16 @@ class HomeController < ApplicationController
 
     Thread.new do
       loop do
-        sleep 1
+        sleep 1000
       end
     end
   end
 
+  def investment_params
+    params.require(:investment).permit(
+    :amount
+    )
+  end
 
 
 
